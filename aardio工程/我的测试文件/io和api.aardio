@@ -1,0 +1,54 @@
+import win.ui;
+import console;
+import winex;
+import fsys.file;
+
+/*DSG{{*/
+mainForm = win.form(text="aardio form";right=443;bottom=145)
+mainForm.add(
+button={cls="button";text="button";left=163;top=84;right=245;bottom=114;z=2};
+edit2={cls="edit";text="edit2";left=53;top=27;right=352;bottom=57;edge=1;z=1}
+)
+/*}}*/
+
+
+
+
+mainForm.edit2.oncommand = function(id,event){
+	//mainForm.msgbox( mainForm.edit2.text );
+	
+	
+}
+
+
+mainForm.button.oncommand = function(id,event){
+	mainForm.msgbox( mainForm.edit2.text );
+	
+	
+}
+var msgToSend=mainForm.edit2.text;
+io.open()
+
+var hFile = fsys.file("fmtest.txt","r+").handle
+
+io.print(hFile)
+
+::Kernel32:=raw.loadDll("Kernel32.dll")
+cfm=Kernel32.api("CreateFileMappingW","INT(pointer handle,int opt=null,int flprotect,int max,int min,string lpname)")
+mvf=Kernel32.api("MapViewOfFileW","pointer(int fmo,INT a,INT b,INT c,int d=0)")
+
+shareFile=cfm(hFile,0,0x04/*PAGE_READWRITE'*/,0,0x1000,"sharedmemory")
+viewAddress=mvf(shareFile,0x0002/*FILE_MAP_ALL_ACCESS*/,0,0,0)
+var content=raw.buffer(10,"")
+raw.copy(content,viewAddress,10)
+io.print(shareFile)
+io.print(content)
+
+//mainForm.show()
+//win.loopMessage();
+console.pause(); 
+
+
+
+
+
